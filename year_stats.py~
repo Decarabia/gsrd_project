@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+import stats_proc
+
+def main():
+
+	name = 'results/gsrd.xls'
+	total = 'results/total'
+        numbers = 'results/assesment'
+	
+	#Read File
+	data = stats_proc.read_file( name )
+
+	#Get the year and data
+	while True:
+		year = raw_input( "Please enter the year (e.g 2010, 2011, etc.): ")
+		
+		if year.isdigit():	
+			year_val = int( year )
+			if 2010 <= year_val:
+				year_data = stats_proc.data_by_year( year_val, data )
+				if not ( year_data.empty ):
+					break
+
+		print "\n\n\nInvalid year or input. Data collection began in 2010.\n\n\n"
+
+	end_data, dates, = stats_proc.data_select( year_data )
+
+	# Process
+	stats_proc.display_dates( dates )
+	
+	results_data, anova_occ, anova_rLength, stats = stats_proc.process( end_data, dates )
+	total_data, total_stats = stats_proc.process_all( end_data )
+	numbers_data, numbers_stats = stats_proc.process_count_freq( end_data )
+
+	print results_data,"\n"
+	print total_data,"\n"
+	print numbers_data,"\n"
+
+	#Save Results
+	year += '.xls'
+	total += year
+	#total += '.xls'
+	numbers += year
+	#numbers += '.xls'
+	
+	stats_proc.save_file( results_data, year, stats )
+	stats_proc.save_file( total_data, total, total_stats )
+	stats_proc.save_file( numbers_data, numbers, numbers_stats )
+	
+	
+
+			
+if __name__== "__main__":
+        main()
+
